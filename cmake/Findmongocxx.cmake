@@ -1,6 +1,6 @@
 # Try to find mongocxx.
 
-# TODO: currently this is just a shim around pkg-config. We will have to do 
+# TODO: currently this is just a shim around pkg-config. We will have to do
 # something for windows eventually.
 
 # These vars will be defined:
