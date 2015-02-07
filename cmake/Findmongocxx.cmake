@@ -7,6 +7,7 @@
 # MONGOCXX_FOUND - System has mongocxx
 # MONGOCXX_VERSION - The version of mongocxx we found
 # MONGOCXX_INCLUDE_DIRS - The mongocxx include directories
+# MONGOCXX_LIBRARY_DIRS - The mongocxx library directories
 # MONGOCXX_LIBRARIES - The libraries needed to use mongocxx
 # MONGOCXX_DEFINITIONS - The compiler switches required for using mongocxx
 
@@ -19,6 +20,7 @@ find_package_handle_standard_args(MONGOCXX
     REQUIRED_VARS
       MONGOCXX_FOUND
       MONGOCXX_INCLUDE_DIRS
+      MONGOCXX_LIBRARY_DIRS
       MONGOCXX_LIBRARIES
     VERSION_VAR
       MONGOCXX_VERSION
