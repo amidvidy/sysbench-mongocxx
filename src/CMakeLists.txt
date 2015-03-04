@@ -4,6 +4,7 @@ set(sources
   load.cpp
   main.cpp
   metrics.cpp
+  report.cpp
 )
   
 include_directories(

@@ -30,9 +30,9 @@ namespace metrics {
 
     class collector {
         friend class scoped_operation;
-
-        uint64_t get_inserts();
         
+    public:
+        uint64_t total_inserts();
     private:
         // these are threadsafe
         void ops_succeeded(duration dur, load_op op_type, uint64_t num_ops);
@@ -56,12 +56,5 @@ namespace metrics {
         bool _success;
     };
 
-    class console_logger {
-       console_logger(collector* rep);
-       ~console_logger();
-   private:
-       collector* _rep;
-       std::thread _thread;
-   };
 }
 }

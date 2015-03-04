@@ -22,8 +22,8 @@ namespace load {
         std::string database_name;
 
         int32_t writer_threads{8};
-        int64_t docs_per_collection{10000000};
-        int64_t docs_per_insert{1000};
+        int64_t docs_per_collection{100000};
+        int64_t docs_per_insert{100};
         int64_t inserts_per_feedback{-1};
         int64_t seconds_per_feedback{10};
 
@@ -51,7 +51,7 @@ namespace load {
         loader(const loader&) = delete;
         loader& operator=(const loader&) = delete;
 
-        void load(metrics::collector* collector);
+        bool load(metrics::collector* collector);
     private:
         options _opts;
         std::vector<worker> _workers;

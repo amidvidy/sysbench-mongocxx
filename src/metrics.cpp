@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "metrics.hpp"
 
 namespace sysbench {
@@ -13,6 +15,10 @@ namespace metrics {
     }
 
     void collector::ops_failed(load_op op_type, uint64_t num_ops) {
+    }
+
+    uint64_t collector::total_inserts() {
+        return _inserts.load();
     }
 
     scoped_operation::scoped_operation(collector *collector, load_op op_type)
