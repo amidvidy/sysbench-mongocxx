@@ -1,7 +1,8 @@
 #include <iostream>
 #include <random>
+#include <thread>
 
-#include <bsoncxx/builder.hpp>
+#include <bsoncxx/builder/stream/document.hpp>
 
 #include <mongocxx/bulk_write.hpp>
 
@@ -33,44 +34,75 @@ namespace load {
     }
 
     void loader::load() {
-        worker w{&_opts};
-        w.work();
+        std::vector<std::thread> threads;
+
+        for (auto&& worker : _workers) {
+            threads.emplace_back([&worker]() { worker.work(); });
+        }
+
+        // TODO: use something better like a barrier.
+        for (auto&& thread : threads) {
+            thread.join();
+        }
     }
 
-    loader::loader(options opts) : _opts(std::move(opts)) {}
+    loader::loader(options opts) : _opts(std::move(opts)) {
+        for (std::size_t i = 0; i < _opts.writer_threads; ++i) {
+            _workers.emplace_back(&_opts);
+        }
+    }
 
     loader::~loader() {
+
         // shutdown workers
     }
 
     worker::worker(options* opts)
         : _client{}
-        , _opts{std::move(opts)} {}
+        , _opts{std::move(opts)} {
+        }
 
     void worker::work() {
         int64_t doc_id{0};
-        auto col = _client["foo"]["bar"];
-        col.drop();
         randgen entropy;
         try {
+            auto db = _client["foo"];
+
+            std::string colname{random_string(short_mask, entropy)};
+
+            auto col = db[colname];
+
+            if (db.has_collection(colname)) {
+                col.drop();
+            }
+
             auto rounds = _opts->docs_per_collection/_opts->docs_per_insert;
+
             for (int64_t cur_round = 0; cur_round < rounds; ++cur_round) {
+
                 mongocxx::bulk_write bulk{false /* unordered */};
+
                 for (int64_t i = 0; i < _opts->docs_per_insert; ++i) {
+
                     ++doc_id;
-                    bsoncxx::builder::document doc;
+                    bsoncxx::builder::stream::document doc;
+
                     doc << "_id" << doc_id
                         << "k" << static_cast<int32_t>(entropy())
                         << "c" << random_string(long_mask, entropy)
                         << "pad" << random_string(short_mask, entropy);
+
                     bulk.append(mongocxx::model::insert_one{doc});
                 }
                 col.bulk_write(bulk);
+
                 std::cout << cur_round << "/" << rounds << std::endl;
+
             }
         } catch (const std::exception& ex) {
             /** FIXME: need actual exception handling **/
             std::cerr << "Fatal error: " << ex.what() << std::endl;
+            std::abort();
         }
     }
 

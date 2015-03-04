@@ -48,7 +48,7 @@ namespace load {
         void load();
     private:
         options _opts;
-        std::vector<std::unique_ptr<worker>> _workers;
+        std::vector<worker> _workers;
     };
 
     class worker {

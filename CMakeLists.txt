@@ -8,6 +8,13 @@ if (NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE "Release")
 endif()
 
+# Set PKG_CONFIG_PATH
+if(DEFINED $ENV{PKG_CONFIG_PATH})
+    set(PKG_CONFIG_PATH $ENV{PKG_CONFIG_PATH})
+else()
+    set(PKG_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
+endif()
+
 set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Werror -fPIC ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 set(CMAKE_CXX_FLAGS_DEBUG "-ggdb3 -O0")
