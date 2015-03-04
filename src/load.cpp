@@ -52,11 +52,6 @@ namespace load {
         }
     }
 
-    loader::~loader() {
-
-        // shutdown workers
-    }
-
     worker::worker(options* opts)
         : _client{}
         , _opts{std::move(opts)} {

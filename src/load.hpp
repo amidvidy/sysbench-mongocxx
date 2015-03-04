@@ -37,9 +37,8 @@ namespace load {
     public:
         loader(options opts);
 
-        loader(loader&&);
-        loader& operator=(loader&&);
-        ~loader();
+        loader(loader&&) = default;
+        loader& operator=(loader&&) = default;
 
         // noncopyable
         loader(const loader&) = delete;
