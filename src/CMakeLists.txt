@@ -1,7 +1,11 @@
 find_package(mongocxx REQUIRED)
 
-file(GLOB sources *.cpp)
-
+set(sources
+  load.cpp
+  main.cpp
+  metrics.cpp
+)
+  
 include_directories(
   ${MONGOCXX_INCLUDE_DIRS}
   ${CMAKE_CURRENT_SOURCE_DIR}

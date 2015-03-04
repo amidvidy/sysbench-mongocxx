@@ -1,3 +1,5 @@
+#pragma once
+
 #include <cstdint>
 
 #include <string>
@@ -7,6 +9,11 @@
 #include <mongocxx/client.hpp>
 
 namespace sysbench {
+
+namespace metrics {
+    class collector;
+}  // namespace collector
+    
 namespace load {
 
     struct options {
@@ -44,7 +51,7 @@ namespace load {
         loader(const loader&) = delete;
         loader& operator=(const loader&) = delete;
 
-        void load();
+        void load(metrics::collector* collector);
     private:
         options _opts;
         std::vector<worker> _workers;
@@ -54,7 +61,7 @@ namespace load {
     public:
         worker(options* opts);
 
-        void work();
+        void work(metrics::collector* collector);
     private:
         mongocxx::client _client;
         // non-owning

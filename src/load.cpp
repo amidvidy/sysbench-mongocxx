@@ -7,6 +7,7 @@
 #include <mongocxx/bulk_write.hpp>
 
 #include "load.hpp"
+#include "metrics.hpp"
 
 namespace sysbench {
 namespace load {
@@ -33,11 +34,11 @@ namespace load {
         auto short_mask = "###########-###########-###########-###########-###########";
     }
 
-    void loader::load() {
+    void loader::load(metrics::collector* collector) {
         std::vector<std::thread> threads;
 
         for (auto&& worker : _workers) {
-            threads.emplace_back([&worker]() { worker.work(); });
+            threads.emplace_back([&worker, collector]() { worker.work(collector); });
         }
 
         // TODO: use something better like a barrier.
@@ -57,7 +58,7 @@ namespace load {
         , _opts{std::move(opts)} {
         }
 
-    void worker::work() {
+    void worker::work(metrics::collector* collector) {
         int64_t doc_id{0};
         randgen entropy;
         try {
@@ -89,10 +90,9 @@ namespace load {
 
                     bulk.append(mongocxx::model::insert_one{doc});
                 }
+                metrics::scoped_operation op(collector, metrics::load_op::k_insert, _opts->docs_per_insert);
                 col.bulk_write(bulk);
-
-                std::cout << cur_round << "/" << rounds << std::endl;
-
+                op.succeeded();
             }
         } catch (const std::exception& ex) {
             /** FIXME: need actual exception handling **/
