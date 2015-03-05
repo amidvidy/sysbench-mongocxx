@@ -16,15 +16,29 @@ namespace metrics {
 namespace execute {
 
     struct options {
-        uint32_t num_collections;
-        uint32_t writer_threads;
-        uint32_t seconds_per_feedback;
-        std::string database_name;
+        uint32_t num_collections{1};
+        uint32_t writer_threads{1};
+        uint32_t seconds_per_feedback{1};
+
+        uint32_t num_point_selects;
+        uint32_t num_simple_ranges;
+        uint32_t num_sum_ranges;
+        uint32_t num_order_ranges;
+        uint32_t num_distinct_ranges;
+        uint32_t num_indexed_updates;
+        uint32_t num_unindexed_updates;
+        uint32_t num_inserts;
+
+        uint32_t range_length;
+        
+        std::string database_name{1};
     };
 
-    class worker;
 
+    class worker;
+    
     class execute_phase {
+        friend class worker;
     public:
         execute_phase(options opts);
 

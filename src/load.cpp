@@ -45,7 +45,6 @@ namespace load {
         for (auto&& thread : threads) {
             thread.join();
         }
-        return true;
     }
 
     load_phase::load_phase(options opts) : _opts(std::move(opts)) {
