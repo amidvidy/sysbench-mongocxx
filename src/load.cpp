@@ -34,7 +34,7 @@ namespace load {
         auto short_mask = "###########-###########-###########-###########-###########";
     }
 
-    bool loader::load(metrics::collector* collector) {
+    void load_phase::run(metrics::collector* collector) {
         std::vector<std::thread> threads;
         std::cout << "starting load" << std::endl;
         for (auto&& worker : _workers) {
@@ -48,7 +48,7 @@ namespace load {
         return true;
     }
 
-    loader::loader(options opts) : _opts(std::move(opts)) {
+    load_phase::load_phase(options opts) : _opts(std::move(opts)) {
         std::cout << "loadctor" << std::endl;
         for (std::size_t i = 0; i < _opts.writer_threads; ++i) {
             _workers.emplace_back(&_opts);
@@ -58,7 +58,7 @@ namespace load {
     worker::worker(options* opts)
         : _client{}
         , _opts{std::move(opts)} {
-        }
+    }
 
     void worker::work(metrics::collector* collector) {
         int64_t doc_id{0};

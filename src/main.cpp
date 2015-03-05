@@ -10,10 +10,10 @@ int main(int argc, char** argv) {
     try {
         metrics::collector collector{};
         load::options opts;
-        load::loader loader{opts};
+        load::load_phase load_phase{opts};
         report::console_logger logger{&collector};
         logger.start();
-        loader.load(&collector);
+        load_phase.load(&collector);
     } catch (const std::exception& ex) {
         std::cout << "something terrible happened" << std::endl;
     }

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-
 #include <string>
 #include <vector>
 #include <utility>
@@ -18,14 +17,14 @@ namespace load {
 
     struct options {
         // TODO switch some to unsigned
-        int32_t ncollections{16};
+        uint32_t num_collections{16};
         std::string database_name;
 
-        int32_t writer_threads{8};
-        int64_t docs_per_collection{100000};
-        int64_t docs_per_insert{100};
-        int64_t inserts_per_feedback{-1};
-        int64_t seconds_per_feedback{10};
+        uint32_t writer_threads{8};
+        uint64_t docs_per_collection{10000000};
+        uint64_t docs_per_insert{1000};
+        uint64_t inserts_per_feedback{1};
+        uint64_t seconds_per_feedback{10};
 
         std::string logfile;
         std::string index_technology;
@@ -40,18 +39,18 @@ namespace load {
 
     class worker;
 
-    class loader {
+    class load_phase {
     public:
-        loader(options opts);
+        load_phase(options opts);
 
-        loader(loader&&) = default;
-        loader& operator=(loader&&) = default;
+        load_phase(load_phase&&) = default;
+        load_phase& operator=(load_phase&&) = default;
 
         // noncopyable
-        loader(const loader&) = delete;
-        loader& operator=(const loader&) = delete;
+        load_phase(const load_phase&) = delete;
+        load_phase& operator=(const load_phase&) = delete;
 
-        bool load(metrics::collector* collector);
+        void run(metrics::collector* collector);
     private:
         options _opts;
         std::vector<worker> _workers;
