@@ -16,7 +16,10 @@ namespace execute {
 
     using namespace bsoncxx::builder::stream;
 
-    execute_phase::execute_phase(options opts) : _opts{std::move(opts)} {
+    execute_phase::execute_phase(options opts)
+        : _done{false}
+        , _opts{std::move(opts)} {
+
         for (std::size_t i = 0; i < _opts.writer_threads; ++i) {
             _workers.emplace_back(i, &_opts, this);
         }
@@ -63,7 +66,7 @@ namespace execute {
                 auto doc = col.find_one(document{} << "_id" << start_id << finalize, opts);
                 
                 if (doc) {
-                    //std::cout << bsoncxx::to_json(doc.value()) << std::endl;
+                    std::cout << bsoncxx::to_json(doc.value()) << std::endl;
                 }
             }
 
@@ -78,11 +81,12 @@ namespace execute {
                                         << finalize;
                 
                 mongocxx::options::find opts;
-                opts.projection(document{} << "c" << 1 << "_id" << 0 << finalize);
+                auto project = document{} << "c" << 1 << "_id" << 0 << finalize;
+                opts.projection(project);
                 
                 auto cursor = col.find(query, opts);
                 for (auto&& doc : cursor) {
-                    //std::cout << bsoncxx::to_json(doc) << std::endl;
+                    std::cout << bsoncxx::to_json(doc) << std::endl;
                 }
             }
 
@@ -107,7 +111,7 @@ namespace execute {
 
                 auto cursor = col.aggregate(pipeline);
                 for (auto&& doc : cursor) {
-                    //std::cout << bsoncxx::to_json(doc) << std::endl;
+                    std::cout << bsoncxx::to_json(doc) << std::endl;
                 }
             }
 
@@ -122,13 +126,14 @@ namespace execute {
                                         << finalize;
 
                 mongocxx::options::find opts;
-                opts.projection(document{} << "c" << 1 << "_id" << 0 << finalize);
+                auto project = document{} << "c" << 1 << "_id" << 0 << finalize;
+                opts.projection(project);
                 auto sort = document{} << "c" << 1 << finalize;
                 opts.sort(sort);
 
                 auto cursor = col.find(query, opts);
                 for (auto&& doc : cursor) {
-                    //std::cout << bsoncxx::to_json(doc) << std::endl;
+                    std::cout << bsoncxx::to_json(doc) << std::endl;
                 }
             }
 
@@ -142,11 +147,11 @@ namespace execute {
                                             << "$lte" << end_id << close_document
                                         << finalize;
 
-                //auto cursor = col.distinct("c", query);
+                auto cursor = col.distinct("c", query);
 
-                //for (auto&& doc : cursor) {
-                    //  std::cout << bsoncxx::to_json(doc) << std::endl;
-                //}
+                for (auto&& doc : cursor) {
+                    //std::cout << bsoncxx::to_json(doc) << std::endl;
+                }
             }
 
             // index updates
@@ -174,9 +179,7 @@ namespace execute {
             // inserts
             for (int64_t i = 0; i < _opts->num_inserts; ++i) {
                 int32_t start_id = 0;
-
                 auto remove = col.delete_one(document{} << "_id" << start_id << finalize);
-
                 auto doc = document{} << "_id" << start_id
                                       << "k" << 22 // fixme
                                       << "c" << "ccccc" // fixme

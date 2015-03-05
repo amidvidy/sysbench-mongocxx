@@ -17,7 +17,7 @@ namespace execute {
 
     struct options {
         uint32_t num_collections{1};
-        uint32_t writer_threads{8};
+        uint32_t writer_threads{1};
         uint32_t seconds_per_feedback{1};
 
         uint32_t num_point_selects{1};
