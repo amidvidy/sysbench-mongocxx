@@ -1,7 +1,13 @@
 #include "sysbench/load/worker.hpp"
 
+#include <random>
+
 #include <bsoncxx/builder/stream/document.hpp>
 #include <mongocxx/bulk_write.hpp>
+
+#include "sysbench/data.hpp"
+#include "sysbench/load/options.hpp"
+#include "sysbench/metrics/metrics.hpp"
 
 namespace sysbench {
 namespace load {
@@ -45,7 +51,7 @@ namespace load {
 
                     bulk.append(mongocxx::model::insert_one{doc});
                 }
-                metrics::scoped_operation op(collector, metrics::load_op::k_insert, _opts->docs_per_insert);
+                metrics::scoped_operation op(collector, operation::k_insert, _opts->docs_per_insert);
                 col.bulk_write(bulk);
                 op.succeeded();
             }

@@ -1,9 +1,9 @@
 #include <iostream>
 
-#include "execute.hpp"
-#include "load.hpp"
-#include "metrics.hpp"
-#include "report.hpp"
+#include "sysbench/execute/phase.hpp"
+#include "sysbench/load/phase.hpp"
+#include "sysbench/metrics/metrics.hpp"
+#include "sysbench/report/report.hpp"
 
 using namespace sysbench;
 
@@ -18,20 +18,20 @@ int main(int argc, char** argv) {
 
         {
             // LOAD PHASE
-            load::load_phase load_phase{load_opts};
-            metrics::collector<metrics::load_op> load_collector{};
-            report::console_logger logger{&load_collector};
+            load::phase phase{load_opts};
+            metrics::collector collector{};
+            report::console_logger logger{&collector};
             logger.start();
-            load_phase.run(&collector);
+            phase.run(&collector);
         }
 
         {
             // EXECUTE PHASE
-            execute::execute_phase execute_phase{exec_opts};
-            metrics::collector<metrics::execute_op> execute_collector{};
-            report::console_logger logger{&execute_collector{}};
+            execute::phase phase{exec_opts};
+            metrics::collector collector{};
+            report::console_logger logger{&collector};
             logger.start();
-            execute_phase.run(&exec_collector);
+            phase.run(&collector);
         }
         
     } catch (const std::exception& ex) {

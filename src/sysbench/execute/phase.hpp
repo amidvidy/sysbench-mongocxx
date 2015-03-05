@@ -3,10 +3,16 @@
 #include <atomic>
 #include <vector>
 
-namespace sysbench {
-namespace execute {
+#include "sysbench/execute/options.hpp"
+#include "sysbench/execute/worker.hpp"
 
-    class worker;
+namespace sysbench {
+
+namespace metrics {
+    class collector;
+}
+    
+namespace execute {
 
     class phase {
         friend class worker;
@@ -26,7 +32,6 @@ namespace execute {
         options _opts;
         std::vector<worker> _workers;
     };
-};
     
 }  // execute
 }  // sysbench

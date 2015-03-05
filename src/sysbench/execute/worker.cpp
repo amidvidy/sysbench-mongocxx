@@ -1,4 +1,4 @@
-#include "worker.cpp"
+#include "sysbench/execute/worker.hpp"
 
 #include <chrono>
 
@@ -9,12 +9,17 @@
 #include <mongocxx/options/find.hpp>
 #include <mongocxx/pipeline.hpp>
 
+#include "sysbench/data.hpp"
+#include "sysbench/execute/options.hpp"
+#include "sysbench/execute/phase.hpp"
+#include "sysbench/metrics/metrics.hpp"
+
 namespace sysbench {
 namespace execute {
 
     using namespace bsoncxx::builder::stream;
 
-    worker::worker(uint32_t worker_id, options* opts, execute_phase* phase)
+    worker::worker(uint32_t worker_id, options* opts, phase* phase)
         : _id{worker_id}
         , _client{}
         , _opts{std::move(opts)}

@@ -1,5 +1,7 @@
 #include "sysbench/execute/phase.hpp"
 
+#include <thread>
+
 namespace sysbench {
 namespace execute {
 

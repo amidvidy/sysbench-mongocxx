@@ -8,7 +8,14 @@
 #include <mongocxx/client.hpp>
 
 namespace sysbench {
-namespace worker {
+
+namespace metrics {
+    class collector;
+}  // namespace metrics
+    
+namespace load {
+
+    struct options;
 
     class worker {
     public:
@@ -22,5 +29,5 @@ namespace worker {
         const options* _opts;
     };
     
-}
-}
+}  // namespace load
+}  // namespace worker

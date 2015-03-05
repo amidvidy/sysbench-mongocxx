@@ -1,21 +1,21 @@
 find_package(mongocxx REQUIRED)
 
-set(sources
+set(sysbench-sources
   data.cpp
-  execute.cpp
-  load.cpp
   main.cpp
-  metrics.cpp
-  report.cpp
+  load/phase.cpp
+  load/worker.cpp
+  execute/phase.cpp
+  execute/worker.cpp
+  metrics/metrics.cpp
+  report/report.cpp
 )
-
-
   
 include_directories(
   ${MONGOCXX_INCLUDE_DIRS}
-  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_SOURCE_DIR}/src
 )
 
 link_directories(${MONGOCXX_LIBRARY_DIRS})
-add_executable(sysbench-mongocxx ${sources})
+add_executable(sysbench-mongocxx ${sysbench-sources})
 target_link_libraries(sysbench-mongocxx ${MONGOCXX_LIBRARIES})

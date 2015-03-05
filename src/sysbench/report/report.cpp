@@ -1,8 +1,8 @@
 #include <iostream>
 #include <chrono>
 
-#include "report.hpp"
-#include "metrics.hpp"
+#include "sysbench/report/report.hpp"
+#include "sysbench/metrics/metrics.hpp"
 
 namespace sysbench {
 namespace report {

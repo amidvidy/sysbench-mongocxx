@@ -6,7 +6,7 @@
 #include <memory>
 #include <thread>
 
-#include "ops.hpp"
+#include "sysbench/load/operations.hpp"
 
 namespace sysbench {
 namespace metrics {
@@ -19,26 +19,25 @@ namespace metrics {
         friend class scoped_operation;
         
     public:
-        uint64_t total();
+        uint64_t total_inserts();
     private:
         // these are threadsafe
-        void ops_succeeded(duration dur, load_op op_type, uint64_t num_ops);
-        void ops_failed(EventType op_type, uint64_t num_ops);
+        void ops_succeeded(duration dur, load::operation op, uint64_t num_ops);
+        void ops_failed(load::operation op_type, uint64_t num_ops);
 
         std::atomic<uint64_t> _inserts;
     };
 
-    template<typename Collector, typename EventType>
     class scoped_operation {
     public:
-        scoped_operation(Collector* collector, EventType op_type);
-        scoped_operation(Collector* collector, EventType op_type, uint64_t num_ops);
+        scoped_operation(collector* collector, load::operation op_type);
+        scoped_operation(collector* collector, load::operation op_type, uint64_t num_ops);
         ~scoped_operation();
         void succeeded();
     private:
         // non-owning
-        Collector* _rep;
-        EventType _op_type;
+        collector* _rep;
+        load::operation _op_type;
         uint64_t _num_ops;
         time_point _start;
         bool _success;

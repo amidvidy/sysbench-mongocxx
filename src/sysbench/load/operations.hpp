@@ -1,7 +1,7 @@
 namespace sysbench {
 namespace load {    
 
-    enum class load_op {
+    enum class operation {
         k_insert,
     };
 

@@ -5,23 +5,23 @@
 namespace sysbench {
 namespace metrics {
 
-    void collector::ops_succeeded(duration dur, load_op op_type, uint64_t num_ops) {
+    void collector::ops_succeeded(duration dur, load::operation op_type, uint64_t num_ops) {
         //_inserts.fetch_add(num_ops, std::memory_order_relaxed);
         switch (op_type) {
-        case load_op::k_insert:
+        case load::operation::k_insert:
             _inserts.fetch_add(num_ops);
             break;
         }
     }
 
-    void collector::ops_failed(load_op op_type, uint64_t num_ops) {
+    void collector::ops_failed(load::operation op_type, uint64_t num_ops) {
     }
 
     uint64_t collector::total_inserts() {
         return _inserts.load();
     }
 
-    scoped_operation::scoped_operation(collector *collector, load_op op_type)
+    scoped_operation::scoped_operation(collector *collector, load::operation op_type)
         : _rep{std::move(collector)}
         , _op_type{std::move(op_type)}
         , _num_ops{1}
@@ -29,7 +29,7 @@ namespace metrics {
         , _success{false}
     {}
 
-    scoped_operation::scoped_operation(collector *collector, load_op op_type, uint64_t num_ops)
+    scoped_operation::scoped_operation(collector *collector, load::operation op_type, uint64_t num_ops)
         : _rep{std::move(collector)}
         , _op_type{std::move(op_type)}
         , _num_ops{num_ops}

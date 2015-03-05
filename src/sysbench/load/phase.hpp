@@ -1,3 +1,10 @@
+#pragma once
+
+#include <vector>
+
+#include "sysbench/load/options.hpp"
+#include "sysbench/load/worker.hpp"
+
 namespace sysbench {
 namespace load {
 

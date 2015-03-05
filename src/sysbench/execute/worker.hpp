@@ -5,8 +5,16 @@
 #include <mongocxx/client.hpp>
 
 namespace sysbench {
+
+namespace metrics {
+    class collector;
+}  // namespace metrics
+    
 namespace execute {
 
+    class phase;
+    struct options;
+    
     class worker {
     public:
         worker(uint32_t worker_id, options* opts, phase* phase);
@@ -18,7 +26,7 @@ namespace execute {
         const options* _opts;
         // non-owning
         phase* _phase;
-    }
+    };
     
 }
 }

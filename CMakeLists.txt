@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 
+project(SYSBENCH-MONGOCXX)
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 find_package(PkgConfig)
 
