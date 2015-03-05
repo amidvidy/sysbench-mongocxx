@@ -9,10 +9,6 @@
 
 namespace sysbench {
 
-namespace metrics {
-    class collector;
-}
-    
 namespace execute {
 
     struct options {
@@ -29,7 +25,9 @@ namespace execute {
         uint32_t num_unindexed_updates{1};
         uint32_t num_inserts{1};
 
-        uint32_t range_length;
+        uint32_t range_length{10};
+
+        uint32_t docs_per_collection{1000};
         
         std::string database_name{"sysbenchdb"};
     };

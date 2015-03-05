@@ -9,20 +9,30 @@ using namespace sysbench;
 
 int main(int argc, char** argv) {
     try {
-        metrics::collector collector{};
-
+        
         load::options load_opts;
         execute::options exec_opts;
-        
-        load::load_phase load_phase{load_opts};
-        
-        execute::execute_phase execute_phase{exec_opts};
-        report::console_logger logger{&collector};
 
-        logger.start();
+        // HACK
+        exec_opts.docs_per_collection = load_opts.docs_per_collection;
 
-        load_phase.run(&collector);
-        execute_phase.run(&collector);
+        {
+            // LOAD PHASE
+            load::load_phase load_phase{load_opts};
+            metrics::collector<metrics::load_op> load_collector{};
+            report::console_logger logger{&load_collector};
+            logger.start();
+            load_phase.run(&collector);
+        }
+
+        {
+            // EXECUTE PHASE
+            execute::execute_phase execute_phase{exec_opts};
+            metrics::collector<metrics::execute_op> execute_collector{};
+            report::console_logger logger{&execute_collector{}};
+            logger.start();
+            execute_phase.run(&exec_collector);
+        }
         
     } catch (const std::exception& ex) {
         std::cout << "something terrible happened" << std::endl;

@@ -35,7 +35,7 @@ namespace metrics {
         uint64_t total_inserts();
     private:
         // these are threadsafe
-        void ops_succeeded(duration dur, load_op op_type, uint64_t num_ops);
+        void ops_succeeded(duration dur, EventType op_type, uint64_t num_ops);
         void ops_failed(load_op op_type, uint64_t num_ops);
 
         std::atomic<uint64_t> _inserts;
