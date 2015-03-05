@@ -1,10 +1,7 @@
 namespace sysbench {
+namespace execute {
 
-    enum class load_op {
-        k_insert,
-    };
-
-    enum class execute_op {
+    enum class operation {
         k_point_query,
         k_simple_range,
         k_sum_range,
@@ -15,4 +12,5 @@ namespace sysbench {
         k_insert
    };
 
+}
 }
