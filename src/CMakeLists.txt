@@ -1,6 +1,7 @@
 find_package(mongocxx REQUIRED)
 
 set(sources
+  data.cpp
   execute.cpp
   load.cpp
   main.cpp

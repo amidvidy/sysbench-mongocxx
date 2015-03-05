@@ -1,44 +1,25 @@
 #include <iostream>
-#include <random>
+
 #include <thread>
 
 #include <bsoncxx/builder/stream/document.hpp>
 
 #include <mongocxx/bulk_write.hpp>
 
+#include "data.hpp"
 #include "load.hpp"
 #include "metrics.hpp"
 
 namespace sysbench {
 namespace load {
 
-    namespace {
-
-        using randgen = std::mt19937;
-
-        // TODO, why is std::rand() so much faster than all the
-        // stuff in <random> ??
-        std::string random_string(const char* mask, randgen& r) {
-            //std::uniform_int_distribution<int> distribution;
-            std::string s(mask);
-            for (std::size_t i = 0; i < s.length(); ++i) {
-                if (s[i] == '#') {
-                    //s[i] = 'a' + static_cast<char>(distribution(r) % 26);
-                    s[i] = 'a' + static_cast<char>(std::rand() % 26);
-                }
-            }
-            return s;
-        }
-
-        auto long_mask = "###########-###########-###########-###########-###########-###########-###########-###########-###########-###########";
-        auto short_mask = "###########-###########-###########-###########-###########";
-    }
-
     void load_phase::run(metrics::collector* collector) {
         std::vector<std::thread> threads;
         std::cout << "starting load" << std::endl;
         for (auto&& worker : _workers) {
-            threads.emplace_back([&worker, collector]() { worker.work(collector); });
+            threads.emplace_back([&worker, collector]() {
+                    worker.work(collector);
+            });
         }
         std::cout << "threads running" << std::endl;
         // TODO: use something better like a barrier.
@@ -48,24 +29,25 @@ namespace load {
     }
 
     load_phase::load_phase(options opts) : _opts(std::move(opts)) {
-        std::cout << "loadctor" << std::endl;
         for (std::size_t i = 0; i < _opts.writer_threads; ++i) {
-            _workers.emplace_back(&_opts);
+            _workers.emplace_back(i, &_opts);
         }
     }
 
-    worker::worker(options* opts)
-        : _client{}
+    worker::worker(uint32_t worker_id, options* opts)
+        : _id{worker_id}
+        , _client{}
         , _opts{std::move(opts)} {
     }
 
     void worker::work(metrics::collector* collector) {
         int64_t doc_id{0};
-        randgen entropy;
+        std::random_device rd;
+        data::randgen entropy{rd()};
         try {
-            auto db = _client["foo"];
+            auto db = _client[_opts->database_name];
 
-            std::string colname{random_string(short_mask, entropy)};
+            std::string colname{std::string{"sysbench"} + std::to_string(_id)};
 
             auto col = db[colname];
 
@@ -86,8 +68,8 @@ namespace load {
 
                     doc << "_id" << doc_id
                         << "k" << static_cast<int32_t>(entropy())
-                        << "c" << random_string(long_mask, entropy)
-                        << "pad" << random_string(short_mask, entropy);
+                        << "c" << data::random_string(data::long_mask, &entropy)
+                        << "pad" << data::random_string(data::short_mask, &entropy);
 
                     bulk.append(mongocxx::model::insert_one{doc});
                 }

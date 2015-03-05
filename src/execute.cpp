@@ -17,19 +17,38 @@ namespace execute {
     using namespace bsoncxx::builder::stream;
 
     execute_phase::execute_phase(options opts) : _opts{std::move(opts)} {
+        for (std::size_t i = 0; i < _opts.writer_threads; ++i) {
+            _workers.emplace_back(i, &_opts, this);
+        }
     }
 
     void execute_phase::run(metrics::collector* collector) {
-        // sleep until benchmark is over, then tell writers to stop.
+        std::vector<std::thread> threads;
+        std::cout << "starting execute" << std::endl;
+        for (auto&& worker : _workers) {
+            threads.emplace_back([&worker, collector]() { worker.work(collector); });
+        }
+        std::cout << "threads running" << std::endl;
+
+
+        std::this_thread::sleep_for(std::chrono::seconds{20});
+        _done.store(true);
+        
+        // TODO: use something better like a barrier.
+        for (auto&& thread : threads) {
+            thread.join();
+        }
     }
 
-    worker::worker(options* opts)
-        : _client{}
-        , _opts{std::move(opts)} {
+    worker::worker(uint32_t worker_id, options* opts, execute_phase* phase)
+        : _id{worker_id}
+        , _client{}
+        , _opts{std::move(opts)}
+        , _phase{std::move(phase)} {
     }
 
     void worker::work(metrics::collector* collector) {
-        auto col = _client["foo"]["bar"];
+        auto col = _client[_opts->database_name][std::string{"sysbench"} + std::to_string(_id)];
 
         while(!_phase->_done.load()) {
 
@@ -37,8 +56,15 @@ namespace execute {
             for (int64_t i = 0; i < _opts->num_point_selects; ++i) {
                 int32_t start_id = 0;
                 mongocxx::options::find opts;
-                opts.projection(document{} << "c" << 1 << "_id" << 0 << finalize);
+
+                auto projection = document{} << "c" << 1 << "_id" << 0 << finalize;
+                opts.projection(projection);
+
                 auto doc = col.find_one(document{} << "_id" << start_id << finalize, opts);
+                
+                if (doc) {
+                    //std::cout << bsoncxx::to_json(doc.value()) << std::endl;
+                }
             }
 
             // simple ranges
@@ -56,7 +82,7 @@ namespace execute {
                 
                 auto cursor = col.find(query, opts);
                 for (auto&& doc : cursor) {
-                    std::cout << bsoncxx::to_json(doc) << std::endl;
+                    //std::cout << bsoncxx::to_json(doc) << std::endl;
                 }
             }
 
@@ -81,7 +107,7 @@ namespace execute {
 
                 auto cursor = col.aggregate(pipeline);
                 for (auto&& doc : cursor) {
-                    std::cout << bsoncxx::to_json(doc) << std::endl;
+                    //std::cout << bsoncxx::to_json(doc) << std::endl;
                 }
             }
 
@@ -97,11 +123,12 @@ namespace execute {
 
                 mongocxx::options::find opts;
                 opts.projection(document{} << "c" << 1 << "_id" << 0 << finalize);
-                opts.sort(document{} << "c" << 1 << finalize);
+                auto sort = document{} << "c" << 1 << finalize;
+                opts.sort(sort);
 
                 auto cursor = col.find(query, opts);
                 for (auto&& doc : cursor) {
-                    std::cout << bsoncxx::to_json(doc) << std::endl;
+                    //std::cout << bsoncxx::to_json(doc) << std::endl;
                 }
             }
 
@@ -115,11 +142,11 @@ namespace execute {
                                             << "$lte" << end_id << close_document
                                         << finalize;
 
-                auto cursor = col.distinct("c", query);
+                //auto cursor = col.distinct("c", query);
 
-                for (auto&& doc : cursor) {
-                    std::cout << bsoncxx::to_json(doc) << std::endl;
-                }
+                //for (auto&& doc : cursor) {
+                    //  std::cout << bsoncxx::to_json(doc) << std::endl;
+                //}
             }
 
             // index updates

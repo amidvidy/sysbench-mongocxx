@@ -18,11 +18,11 @@ namespace load {
     struct options {
         // TODO switch some to unsigned
         uint32_t num_collections{16};
-        std::string database_name;
+        std::string database_name{"sysbenchdb"};
 
         uint32_t writer_threads{8};
-        uint64_t docs_per_collection{10000000};
-        uint64_t docs_per_insert{1000};
+        uint64_t docs_per_collection{1000};
+        uint64_t docs_per_insert{100};
         uint64_t inserts_per_feedback{1};
         uint64_t seconds_per_feedback{10};
 
@@ -58,10 +58,11 @@ namespace load {
 
     class worker {
     public:
-        worker(options* opts);
+        worker(uint32_t worker_id, options* opts);
 
         void work(metrics::collector* collector);
     private:
+        uint32_t _id;
         mongocxx::client _client;
         // non-owning
         const options* _opts;

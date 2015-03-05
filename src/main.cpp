@@ -18,8 +18,12 @@ int main(int argc, char** argv) {
         
         execute::execute_phase execute_phase{exec_opts};
         report::console_logger logger{&collector};
+
         logger.start();
+
         load_phase.run(&collector);
+        execute_phase.run(&collector);
+        
     } catch (const std::exception& ex) {
         std::cout << "something terrible happened" << std::endl;
     }

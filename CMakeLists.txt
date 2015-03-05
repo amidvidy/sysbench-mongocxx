@@ -15,8 +15,8 @@ else()
     set(PKG_CONFIG_PATH "${CMAKE_INSTALL_PREFIX}/lib/pkgconfig")
 endif()
 
-set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -Werror -fPIC ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-std=c++11 -Wall -fPIC ${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_FLAGS_DEBUG "-ggdb3 -O0")
+set(CMAKE_CXX_FLAGS_DEBUG "-ggdb3 -O0 -g")
 
 add_subdirectory(src)
