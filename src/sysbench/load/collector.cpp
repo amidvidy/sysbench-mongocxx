@@ -1,5 +1,6 @@
 #include <sstream>
 #include <iomanip>
+#include <chrono>
 
 #include "sysbench/load/collector.hpp"
 
@@ -8,13 +9,15 @@ namespace load {
 
     collector::collector(options opts)
         : _opts{std::move(opts)}
-        , _inserts{_opts.sample_resolution}
+        , _insert_throughput{_opts.sample_resolution}
+        , _insert_latency{1}
     {}
 
     void collector::ops_succeeded(metrics::duration dur, operation op_type, uint64_t num_ops) {
         switch (op_type) {
         case operation::k_insert:
-            _inserts.record(num_ops);
+            _insert_throughput.record(num_ops);
+            _insert_latency.record(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
             break;
         }
     }
@@ -25,19 +28,39 @@ namespace load {
     std::string collector::report_string() const {
         std::stringstream ss;
 
-        auto total_ops = _inserts.get_total();
+        auto total_ops = _insert_throughput.get_total();
         auto total_seconds =
-            std::chrono::duration_cast<std::chrono::seconds>(_inserts.elapsed()).count();
+            std::chrono::duration_cast<std::chrono::seconds>(_insert_throughput.elapsed()).count();
+        
+        auto interval_ops = _insert_throughput.get_last();
 
         // TODO hack;
         if (total_seconds == 0) {
-            return "";
+          return "";
         }
+
+        auto avg = _insert_latency.percentile(0.5);
+        auto nn = _insert_latency.percentile(0.99);
 
         auto total_ips = total_ops / total_seconds;
 
-        ss << std::setw(15) << std::right << std::string{"total inserts: "} + std::to_string(total_ops);
-        ss << std::setw(15) << std::right << std::string{" || total ips: "} + std::to_string(total_ips);
+        ss << std::setw(20) << std::right 
+           << std::string{"total inserts: "} + std::to_string(total_ops);
+        
+        ss << std::setw(20) << std::right 
+           << std::string{" || total ips: "} + std::to_string(total_ips);
+
+        ss << std::setw(20) << std::right
+           << std::string{" ||  interval ips: "} + std::to_string(interval_ops);
+        
+        ss << std::setw(20) << std::right
+           << std::string{" ||  avg latency: "} + std::to_string(avg);
+
+        ss << std::setw(20) << std::right
+           << std::string{" ||  99% latency: "} + std::to_string(nn);
+
+        
+
         return ss.str();
     }
 

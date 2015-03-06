@@ -11,6 +11,7 @@
 #include "sysbench/load/options.hpp"
 #include "sysbench/metrics/time.hpp"
 #include "sysbench/metrics/series.hpp"
+#include "sysbench/metrics/distribution.hpp"
 
 namespace sysbench {
 namespace load {
@@ -31,7 +32,8 @@ namespace load {
            void ops_failed(load::operation op_type, uint64_t num_ops);
 
            options _opts;
-           metrics::series _inserts;
+           metrics::series _insert_throughput;
+           metrics::distribution _insert_latency;
 
     };
 

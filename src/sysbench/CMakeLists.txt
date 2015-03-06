@@ -11,6 +11,7 @@ set(sysbench-sources
   execute/phase.cpp
   execute/worker.cpp
   metrics/series.cpp
+  metrics/distribution.cpp
 )
   
 include_directories(

@@ -31,20 +31,24 @@ namespace metrics {
     void series::record(uint64_t n) const {
         auto bucket = current_bucket();
         // ensure we have space.
-        // todo: figure out ugly initalization issue
-        _data.grow_to_at_least(bucket + 1);
-        _data[bucket].fetch_add(n);
-        _total.fetch_add(n);
+        auto zero = tbb::atomic<uint64_t>{0};
+        _data.grow_to_at_least(bucket + 1, zero);
+        _data[bucket].fetch_and_add(n);
+        _total.fetch_and_add(n);
     }
 
     uint64_t series::get_total() const {
-        return _total.load();
+        return _total;
     }
 
-    uint64_t series::get_current() const {
-        auto bucket = current_bucket();
-        _data.grow_to_at_least(bucket + 1);
-        return _data[bucket].load();
+    uint64_t series::get_last() const {
+      auto cur = current_bucket();
+      if (current_bucket() == 0) {
+        return 0;
+      }
+      
+      return _data[cur - 1];
+
     }
 
 }  // namespace metrics
