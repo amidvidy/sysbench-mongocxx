@@ -3,7 +3,7 @@
 #include <cstdint>
 
 #include <tbb/atomic.h>
-#include <tbb/concurrent_unordered_map.h>
+#include <tbb/concurrent_vector.h>
 
 namespace sysbench {
 namespace metrics {
@@ -13,12 +13,12 @@ namespace metrics {
       distribution(uint64_t granularity);
     
       // threadsafe
-      void record(uint64_t measurement) const;
-      uint64_t percentile(double pct) const;
+      void record(int64_t measurement) const;
+      int64_t percentile(double pct) const;
     
   private:
-      mutable tbb::atomic<uint64_t> _cardinality;
-      mutable tbb::concurrent_unordered_map<uint64_t, tbb::atomic<uint64_t>> _buckets;
+      mutable tbb::atomic<int64_t> _cardinality;
+      mutable tbb::concurrent_vector<tbb::atomic<int64_t>> _buckets;
       uint64_t _granularity;
   };
 

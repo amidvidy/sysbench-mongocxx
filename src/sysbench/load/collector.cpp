@@ -17,7 +17,7 @@ namespace load {
         switch (op_type) {
         case operation::k_insert:
             _insert_throughput.record(num_ops);
-            _insert_latency.record(std::chrono::duration_cast<std::chrono::milliseconds>(dur).count());
+            _insert_latency.record(std::chrono::duration_cast<std::chrono::microseconds>(dur).count());
             break;
         }
     }
@@ -39,8 +39,9 @@ namespace load {
           return "";
         }
 
-        auto avg = _insert_latency.percentile(0.5);
-        auto nn = _insert_latency.percentile(0.99);
+        double avg = _insert_latency.percentile(0.5) / 1000.0;
+        double nn = _insert_latency.percentile(0.99) / 1000.0;
+        double nnn = _insert_latency.percentile(0.999) / 1000.0;
 
         auto total_ips = total_ops / total_seconds;
 
@@ -54,11 +55,13 @@ namespace load {
            << std::string{" ||  interval ips: "} + std::to_string(interval_ops);
         
         ss << std::setw(20) << std::right
-           << std::string{" ||  avg latency: "} + std::to_string(avg);
+           << std::string{" ||  avg latency: "} + std::to_string(avg) + std::string("ms");
 
         ss << std::setw(20) << std::right
-           << std::string{" ||  99% latency: "} + std::to_string(nn);
+           << std::string{" ||  99% latency: "} + std::to_string(nn) + std::string("ms");
 
+        ss << std::setw(20) << std::right
+           << std::string{" ||  99.9% latency: "} + std::to_string(nnn) + std::string("ms");
         
 
         return ss.str();

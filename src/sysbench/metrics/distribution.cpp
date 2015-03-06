@@ -1,5 +1,6 @@
 #include "sysbench/metrics/distribution.hpp"
 
+#include <iostream>
 #include <utility>
 
 namespace sysbench {
@@ -11,25 +12,25 @@ namespace metrics {
     , _granularity{std::move(granularity)}
   {}
 
-  void distribution::record(uint64_t measurement) const {
+  void distribution::record(int64_t measurement) const {
       _cardinality.fetch_and_add(1);
-      auto res = _buckets.insert(std::make_pair(measurement, tbb::atomic<uint64_t>{1}));
-      if (!res.second) {
-          // there was already a key for this measurement
-          res.first->second.fetch_and_add(1);
-      }
+      _buckets.grow_to_at_least(measurement+1, tbb::atomic<int64_t>{0});
+      _buckets[measurement].fetch_and_add(1);
 
   }
 
   // this implementation will give approximate answers, but its a good estimation.
-  uint64_t distribution::percentile(double pct) const {
-      uint64_t target = static_cast<uint64_t>(pct * _cardinality);
+  int64_t distribution::percentile(double pct) const {
+      int64_t target = static_cast<uint64_t>(pct * _cardinality);
+      std::cout << target << std::endl;
       // todo, iterate backwards or forwards depending on pct.
-      for (auto&& bucket : _buckets) { 
-          target -= bucket.second;
+      int64_t current = 0;
+      for (auto&& bucket : _buckets.range()) { 
+          target -= bucket;
           if (target <= 0) {
-              return bucket.first;
+              return current;
           }
+          ++current;
       }
       std::abort();
   }
