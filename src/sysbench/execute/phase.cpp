@@ -22,7 +22,7 @@ namespace execute {
             threads.emplace_back([&worker, collector]() { worker.work(collector); });
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds{20});
+        std::this_thread::sleep_for(_opts.phase_total_time);
         _done.store(true);
         
         // TODO: use something better like a barrier.

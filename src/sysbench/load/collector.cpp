@@ -45,24 +45,12 @@ namespace load {
 
         auto total_ips = total_ops / total_seconds;
 
-        ss << std::setw(20) << std::right 
-           << std::string{"total inserts: "} + std::to_string(total_ops);
-        
-        ss << std::setw(20) << std::right 
-           << std::string{" || total ips: "} + std::to_string(total_ips);
-
-        ss << std::setw(20) << std::right
-           << std::string{" ||  interval ips: "} + std::to_string(interval_ops);
-        
-        ss << std::setw(20) << std::right
-           << std::string{" ||  avg latency: "} + std::to_string(avg) + std::string("ms");
-
-        ss << std::setw(20) << std::right
-           << std::string{" ||  99% latency: "} + std::to_string(nn) + std::string("ms");
-
-        ss << std::setw(20) << std::right
-           << std::string{" ||  99.9% latency: "} + std::to_string(nnn) + std::string("ms");
-        
+        ss << "inserts: " << std::setw(8) << total_ops
+           << " || total ips: "  << std::setw(8) << total_ips
+           << " ||  interval ips: " << std::setw(8) << interval_ops
+           << " ||  avg latency: " << std::setprecision(6) << std::setw(8) << avg << "ms"
+           << " ||  99% latency: " << std::setprecision(6) << std::setw(8) << nn << "ms"
+           << " ||  99.9% latency: " << std::setprecision(6) << std::setw(8) << nnn << "ms";
 
         return ss.str();
     }

@@ -8,7 +8,7 @@ namespace execute {
 
     struct options {
         uint32_t num_collections{1};
-        uint32_t writer_threads{1};
+        uint32_t writer_threads{8};
         uint32_t seconds_per_feedback{1};
 
         uint32_t num_point_selects{1};
@@ -24,6 +24,7 @@ namespace execute {
 
         std::chrono::milliseconds sample_resolution{1000};
         std::chrono::seconds log_interval{1};
+        std::chrono::minutes phase_total_time{10};
 
         uint32_t docs_per_collection{1000};
 
