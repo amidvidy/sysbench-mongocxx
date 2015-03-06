@@ -12,8 +12,8 @@ namespace load {
         uint32_t num_collections{16};
         std::string database_name{"sysbenchdb"};
 
-        uint32_t writer_threads{1};
-        uint64_t docs_per_collection{1000};
+        uint32_t writer_threads{4};
+        uint64_t docs_per_collection{1000000};
         uint64_t docs_per_insert{100};
 
         std::chrono::milliseconds sample_resolution{1000};

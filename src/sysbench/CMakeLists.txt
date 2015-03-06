@@ -11,7 +11,6 @@ set(sysbench-sources
   execute/phase.cpp
   execute/worker.cpp
   metrics/series.cpp
-  #output/console_logger.cpp
 )
   
 include_directories(

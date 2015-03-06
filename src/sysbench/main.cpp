@@ -21,8 +21,8 @@ int main(int argc, char** argv) {
             // LOAD PHASE
             load::phase phase{load_opts};
             load::collector collector{load_opts};
-            //report::console_logger logger{&collector};
-            //logger.start();
+            output::console_logger<load::collector> logger{&collector};
+            logger.start();
             phase.run(&collector);
         }
 

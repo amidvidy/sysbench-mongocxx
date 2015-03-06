@@ -4,11 +4,13 @@
 #include <chrono>
 #include <cstdint>
 #include <memory>
+#include <string>
 #include <thread>
 
 #include "sysbench/load/operations.hpp"
 #include "sysbench/load/options.hpp"
 #include "sysbench/metrics/time.hpp"
+#include "sysbench/metrics/series.hpp"
 
 namespace sysbench {
 namespace load {
@@ -21,14 +23,16 @@ namespace load {
         public:
             collector(options opts);
 
-            uint64_t total_inserts();
+            std::string report_string() const;
+            // std::string report_json();
         private:
             // these are threadsafe
            void ops_succeeded(metrics::duration dur, load::operation op, uint64_t num_ops);
            void ops_failed(load::operation op_type, uint64_t num_ops);
 
            options _opts;
-           std::atomic<uint64_t> _inserts;
+           metrics::series _inserts;
+
     };
 
     class scoped_operation {

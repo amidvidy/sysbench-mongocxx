@@ -1,3 +1,6 @@
+#include <sstream>
+#include <iomanip>
+
 #include "sysbench/load/collector.hpp"
 
 namespace sysbench {
@@ -5,12 +8,13 @@ namespace load {
 
     collector::collector(options opts)
         : _opts{std::move(opts)}
+        , _inserts{_opts.sample_resolution}
     {}
 
     void collector::ops_succeeded(metrics::duration dur, operation op_type, uint64_t num_ops) {
         switch (op_type) {
         case operation::k_insert:
-            _inserts.fetch_add(num_ops);
+            _inserts.record(num_ops);
             break;
         }
     }
@@ -18,8 +22,23 @@ namespace load {
     void collector::ops_failed(operation op_type, uint64_t num_ops) {
     }
 
-    uint64_t collector::total_inserts() {
-        return _inserts.load();
+    std::string collector::report_string() const {
+        std::stringstream ss;
+
+        auto total_ops = _inserts.get_total();
+        auto total_seconds =
+            std::chrono::duration_cast<std::chrono::seconds>(_inserts.elapsed()).count();
+
+        // TODO hack;
+        if (total_seconds == 0) {
+            return "";
+        }
+
+        auto total_ips = total_ops / total_seconds;
+
+        ss << std::setw(15) << std::right << std::string{"total inserts: "} + std::to_string(total_ops);
+        ss << std::setw(15) << std::right << std::string{" || total ips: "} + std::to_string(total_ips);
+        return ss.str();
     }
 
     scoped_operation::scoped_operation(collector *collector, operation op_type)
