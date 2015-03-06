@@ -4,14 +4,13 @@
 #include "sysbench/load/phase.hpp"
 #include "sysbench/load/collector.hpp"
 #include "sysbench/execute/collector.hpp"
-#include "sysbench/metrics/metrics.hpp"
 #include "sysbench/output/console_logger.hpp"
 
 using namespace sysbench;
 
 int main(int argc, char** argv) {
     try {
-        
+
         load::options load_opts;
         execute::options exec_opts;
 
@@ -21,7 +20,7 @@ int main(int argc, char** argv) {
         {
             // LOAD PHASE
             load::phase phase{load_opts};
-            load::collector collector{};
+            load::collector collector{load_opts};
             //report::console_logger logger{&collector};
             //logger.start();
             phase.run(&collector);
@@ -35,7 +34,7 @@ int main(int argc, char** argv) {
             //logger.start();
             phase.run(&collector);
         }
-        
+
     } catch (const std::exception& ex) {
         std::cout << "something terrible happened" << std::endl;
     }

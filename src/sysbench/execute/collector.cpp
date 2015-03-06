@@ -3,7 +3,7 @@
 namespace sysbench {
 namespace execute {
 
-    void collector::ops_succeeded(duration dur, operation op_type, uint64_t num_ops) const {
+    void collector::ops_succeeded(metrics::duration dur, operation op_type, uint64_t num_ops) const {
         switch (op_type) {
         case operation::k_transaction:
             _transactions.fetch_add(num_ops);
@@ -65,7 +65,7 @@ namespace execute {
         : _rep{std::move(collector)}
         , _op_type{std::move(op_type)}
         , _num_ops{1}
-        , _start{clock::now()}
+        , _start{metrics::clock::now()}
         , _success{false}
     {}
 
@@ -73,13 +73,13 @@ namespace execute {
         : _rep{std::move(collector)}
         , _op_type{std::move(op_type)}
         , _num_ops{num_ops}
-        , _start{clock::now()}
+        , _start{metrics::clock::now()}
         , _success{false}
     {}
 
     scoped_operation::~scoped_operation() {
         if (_success) {
-            auto end = clock::now();
+            auto end = metrics::clock::now();
             _rep->ops_succeeded(end - _start, _op_type, _num_ops);
         } else {
             _rep->ops_failed(_op_type, _num_ops);
@@ -90,6 +90,6 @@ namespace execute {
         _success = true;
     }
 
-    
+
 }  // execute
 }  // sysbench
