@@ -8,9 +8,15 @@ namespace metrics {
     {}
 
     series::series(std::chrono::milliseconds interval, metrics::time_point start)
-        : _interval{std::move(interval)}
+        : _data{}
+        , _interval{std::move(interval)}
         , _start{std::move(start)}
     {}
+
+    void series::record(uint64_t n) {
+        auto now = clock::now();
+    }
+
 
 }  // namespace metrics
 }  // namespace sysbench
