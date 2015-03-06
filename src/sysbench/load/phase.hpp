@@ -19,7 +19,7 @@ namespace load {
         phase(const phase&) = delete;
         phase& operator=(const phase&) = delete;
 
-        void run(metrics::collector* collector);
+        void run(collector* collector);
     private:
         options _opts;
         std::vector<worker> _workers;

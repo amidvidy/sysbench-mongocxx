@@ -6,8 +6,8 @@
 #include <mongocxx/bulk_write.hpp>
 
 #include "sysbench/data.hpp"
+#include "sysbench/load/collector.hpp"
 #include "sysbench/load/options.hpp"
-#include "sysbench/metrics/metrics.hpp"
 
 namespace sysbench {
 namespace load {
@@ -18,7 +18,7 @@ namespace load {
         , _opts{std::move(opts)} {
     }
 
-    void worker::work(metrics::collector* collector) {
+    void worker::work(collector* collector) {
         int64_t doc_id{0};
         std::random_device rd;
         data::randgen entropy{rd()};
@@ -51,7 +51,7 @@ namespace load {
 
                     bulk.append(mongocxx::model::insert_one{doc});
                 }
-                metrics::scoped_operation op(collector, operation::k_insert, _opts->docs_per_insert);
+                scoped_operation op(collector, operation::k_insert, _opts->docs_per_insert);
                 col.bulk_write(bulk);
                 op.succeeded();
             }

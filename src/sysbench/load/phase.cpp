@@ -5,7 +5,7 @@
 namespace sysbench {
 namespace load {
 
-    void phase::run(metrics::collector* collector) {
+    void phase::run(collector* collector) {
         std::vector<std::thread> threads;
         std::cout << "starting load" << std::endl;
         for (auto&& worker : _workers) {

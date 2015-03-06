@@ -2,12 +2,11 @@
 #include <chrono>
 
 #include "sysbench/report/report.hpp"
-#include "sysbench/metrics/metrics.hpp"
 
 namespace sysbench {
 namespace report {
 
-    console_logger::console_logger(metrics::collector* rep)
+    console_logger::console_logger(collector* rep)
         : _rep{std::move(rep)}
         , _thread{}
         , _done{false} {

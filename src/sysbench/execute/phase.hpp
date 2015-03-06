@@ -8,12 +8,10 @@
 
 namespace sysbench {
 
-namespace metrics {
-    class collector;
-}
-    
 namespace execute {
 
+    class collector;
+    
     class phase {
         friend class worker;
     public:
@@ -26,7 +24,7 @@ namespace execute {
         phase(const phase&) = delete;
         phase& operator=(const phase&) = delete;
 
-        void run(metrics::collector* collector);
+        void run(collector* collector);
     private:
         std::atomic<bool> _done;
         options _opts;

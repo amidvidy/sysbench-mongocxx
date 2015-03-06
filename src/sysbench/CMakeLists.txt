@@ -3,12 +3,13 @@ find_package(mongocxx REQUIRED)
 set(sysbench-sources
   data.cpp
   main.cpp
+  load/collector.cpp
   load/phase.cpp
   load/worker.cpp
+  execute/collector.cpp
   execute/phase.cpp
   execute/worker.cpp
-  metrics/metrics.cpp
-  report/report.cpp
+  #output/console_logger.cpp
 )
   
 include_directories(
