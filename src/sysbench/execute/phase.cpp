@@ -16,6 +16,9 @@ namespace execute {
 
     void phase::run(collector* collector) {
         std::vector<std::thread> threads;
+        
+        // hack, need extra newline here.
+        std::cout << std::endl;
         std::cout << "** EXECUTE PHASE STARTING **" << std::endl;
 
         for (auto&& worker : _workers) {

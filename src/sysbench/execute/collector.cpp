@@ -3,6 +3,7 @@
 #include <iomanip>
 
 #include "sysbench/execute/collector.hpp"
+#include "sysbench/output/colors.hpp"
 
 namespace sysbench {
 namespace execute {
@@ -101,25 +102,13 @@ namespace execute {
 
         auto total_ips = total_ops / total_seconds;
 
-        ss << std::setw(20) << std::right 
-           << std::string{"total transaction: "} + std::to_string(total_ops);
-        
-        ss << std::setw(20) << std::right 
-           << std::string{" || total tps: "} + std::to_string(total_ips);
-
-        ss << std::setw(20) << std::right
-           << std::string{" ||  interval tps: "} + std::to_string(interval_ops);
-        
-        ss << std::setw(20) << std::right
-           << std::string{" ||  avg latency: "} + std::to_string(avg) + std::string("ms");
-
-        ss << std::setw(20) << std::right
-           << std::string{" ||  99% latency: "} + std::to_string(nn) + std::string("ms");
-
-        ss << std::setw(20) << std::right
-           << std::string{" ||  99.9% latency: "} + std::to_string(nnn) + std::string("ms");
-        
-
+        ss << output::color::k_fg_red << "total txns: " << std::setw(5) << total_ops
+           << output::color::k_fg_red << " || total tps: " << std::setw(8) << total_ips
+           << output::color::k_fg_red << " ||  interval tps: " << std::setw(8) << interval_ops
+           << output::color::k_fg_green << " ||  avg latency: " << std::setprecision(6) << std::setw(8) << avg << "ms"
+           << output::color::k_fg_green << " ||  99% latency: " << std::setprecision(6) << std::setw(8) << nn << "ms"
+           << output::color::k_fg_green << " ||  99.9% latency: " << std::setprecision(6) << std::setw(8) << nnn << "ms"
+           << output::color::k_fg_default;
         return ss.str();
     }
 

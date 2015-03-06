@@ -3,6 +3,7 @@
 #include <chrono>
 
 #include "sysbench/load/collector.hpp"
+#include "sysbench/output/colors.hpp"
 
 namespace sysbench {
 namespace load {
@@ -45,12 +46,13 @@ namespace load {
 
         auto total_ips = total_ops / total_seconds;
 
-        ss << "inserts: " << std::setw(8) << total_ops
-           << " || total ips: "  << std::setw(8) << total_ips
-           << " ||  interval ips: " << std::setw(8) << interval_ops
-           << " ||  avg latency: " << std::setprecision(6) << std::setw(8) << avg << "ms"
-           << " ||  99% latency: " << std::setprecision(6) << std::setw(8) << nn << "ms"
-           << " ||  99.9% latency: " << std::setprecision(6) << std::setw(8) << nnn << "ms";
+        ss << output::color::k_fg_red << "inserts: " << std::setw(8) << total_ops
+           << output::color::k_fg_red << " || total ips: "  << std::setw(8) << total_ips
+           << output::color::k_fg_red << " ||  interval ips: " << std::setw(8) << interval_ops
+           << output::color::k_fg_green << " ||  avg latency: " << std::setprecision(6) << std::setw(8) << avg << "ms"
+           << output::color::k_fg_green <<" ||  99% latency: " << std::setprecision(6) << std::setw(8) << nn << "ms"
+           << output::color::k_fg_green << " ||  99.9% latency: " << std::setprecision(6) << std::setw(8) << nnn << "ms"
+           << output::color::k_fg_default;
 
         return ss.str();
     }
