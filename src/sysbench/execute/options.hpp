@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 
 namespace sysbench {
 namespace execute {
@@ -20,6 +21,9 @@ namespace execute {
         uint32_t num_inserts{1};
 
         uint32_t range_length{10};
+
+        std::chrono::milliseconds sample_resolution{1000};
+        std::chrono::seconds log_interval{1};
 
         uint32_t docs_per_collection{1000};
 

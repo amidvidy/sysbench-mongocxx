@@ -1,5 +1,6 @@
 #include "sysbench/execute/worker.hpp"
 
+#include <algorithm>
 #include <chrono>
 #include <exception>
 
@@ -76,10 +77,7 @@ namespace execute {
 
                     scoped_operation op(collector, operation::k_simple_range);
                     auto cursor = col.find(query, opts);
-                    for (auto&& doc : cursor) {
-                        //std::cout << bsoncxx::to_json(doc) << std::endl;
-                    }
-                    op.succeeded();
+                    std::distance(cursor.begin(), cursor.end());
                 } catch (const std::exception& ex) {
                     // FIXME
                 }
@@ -107,9 +105,7 @@ namespace execute {
 
                    scoped_operation op(collector, operation::k_sum_range);
                    auto cursor = col.aggregate(pipeline);
-                   for (auto&& doc : cursor) {
-                       //std::cout << bsoncxx::to_json(doc) << std::endl;
-                   }
+                   std::distance(cursor.begin(), cursor.end());
                    op.succeeded();
                 } catch (const std::exception& ex) {
                     // FIXME
@@ -135,10 +131,7 @@ namespace execute {
 
                     scoped_operation op(collector, operation::k_order_range);
                     auto cursor = col.find(query, opts);
-
-                    for (auto&& doc : cursor) {
-                        //std::cout << bsoncxx::to_json(doc) << std::endl;
-                    }
+                    std::distance(cursor.begin(), cursor.end());
                     op.succeeded();
                 } catch (const std::exception& ex) {
                     // FIXME
@@ -158,9 +151,7 @@ namespace execute {
 
                     scoped_operation op(collector, operation::k_distinct_range);
                     auto cursor = col.distinct("c", query);
-                    for (auto&& doc : cursor) {
-                        //std::cout << bsoncxx::to_json(doc) << std::endl;
-                    }
+                    std::distance(cursor.begin(), cursor.end());
                     op.succeeded();
                 } catch (const std::exception& ex) {
                     // FIXME
@@ -193,7 +184,7 @@ namespace execute {
                             << "c" << data::random_string(data::long_mask, &entropy)
                         << close_document << finalize;
 
-                    scoped_operation op(collector, operation::k_nonindexed_update);
+                    scoped_operation op(collector, operation::k_unindexed_update);
                     auto res = col.update_one(document{} << " _id" << start_id << finalize,
                                               update);
                     op.succeeded();

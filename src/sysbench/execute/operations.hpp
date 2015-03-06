@@ -11,7 +11,7 @@ namespace execute {
         k_order_range,
         k_distinct_range,
         k_indexed_update,
-        k_nonindexed_update,
+        k_unindexed_update,
         k_insert
    };
 

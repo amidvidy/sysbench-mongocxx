@@ -21,7 +21,6 @@ namespace output {
         }
 
         ~console_logger() {
-            std::cout << "destroying logger" << std::endl;
             _done.store(true);
             if (_thread.joinable()) {
                 _thread.join();

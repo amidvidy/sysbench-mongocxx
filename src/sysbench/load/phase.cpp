@@ -7,13 +7,12 @@ namespace load {
 
     void phase::run(collector* collector) {
         std::vector<std::thread> threads;
-        std::cout << "starting load" << std::endl;
+        std::cout << "** LOAD PHASE STARTING **" << std::endl;
         for (auto&& worker : _workers) {
             threads.emplace_back([&worker, collector]() {
                 worker.work(collector);
             });
         }
-        std::cout << "threads running" << std::endl;
         // TODO: use something better like a barrier.
         for (auto&& thread : threads) {
             thread.join();

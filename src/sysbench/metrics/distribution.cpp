@@ -1,6 +1,5 @@
 #include "sysbench/metrics/distribution.hpp"
 
-#include <iostream>
 #include <utility>
 
 namespace sysbench {
@@ -22,7 +21,6 @@ namespace metrics {
   // this implementation will give approximate answers, but its a good estimation.
   int64_t distribution::percentile(double pct) const {
       int64_t target = static_cast<uint64_t>(pct * _cardinality);
-      std::cout << target << std::endl;
       // todo, iterate backwards or forwards depending on pct.
       int64_t current = 0;
       for (auto&& bucket : _buckets.range()) { 

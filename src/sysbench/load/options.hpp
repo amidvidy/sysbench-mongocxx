@@ -13,11 +13,11 @@ namespace load {
         std::string database_name{"sysbenchdb"};
 
         uint32_t writer_threads{8};
-        uint64_t docs_per_collection{10000000};
+        uint64_t docs_per_collection{1000000};
         uint64_t docs_per_insert{1000};
 
         std::chrono::milliseconds sample_resolution{1000};
-        std::chrono::seconds log_interval{10};
+        std::chrono::seconds log_interval{1};
 
         std::string logfile;
         std::string index_technology;
