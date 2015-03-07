@@ -1,5 +1,6 @@
 #include "sysbench/metrics/distribution.hpp"
 
+#include <cstdlib>
 #include <utility>
 
 namespace sysbench {
@@ -23,14 +24,16 @@ namespace metrics {
       int64_t target = static_cast<uint64_t>(pct * _cardinality);
       // todo, iterate backwards or forwards depending on pct.
       int64_t current = 0;
-      for (auto&& bucket : _buckets.range()) { 
+      int64_t last = 0;
+      for (auto&& bucket : _buckets.range()) {
+          last = bucket;
           target -= bucket;
           if (target <= 0) {
               return current;
           }
           ++current;
       }
-      std::abort();
+      return last;
   }
 
 }

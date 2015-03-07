@@ -20,14 +20,14 @@ namespace metrics {
         std::chrono::milliseconds tick() const;
 
         // these are threadsafe
-        void record(uint64_t n) const;
-        uint64_t get_total() const;
-        uint64_t get_last() const;
+        void record(int64_t n) const;
+        int64_t get_total() const;
+        int64_t get_last() const;
 
     private:
         std::size_t current_bucket() const;
-        mutable tbb::atomic<uint64_t> _total{0};
-        mutable tbb::concurrent_vector<tbb::atomic<uint64_t>> _data;
+        mutable tbb::atomic<int64_t> _total{0};
+        mutable tbb::concurrent_vector<tbb::atomic<int64_t>> _data;
         std::chrono::milliseconds _tick;
         clock::time_point _start;
     };

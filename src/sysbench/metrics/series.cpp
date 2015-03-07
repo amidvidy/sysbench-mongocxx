@@ -28,25 +28,25 @@ namespace metrics {
         return _tick;
     }
 
-    void series::record(uint64_t n) const {
+    void series::record(int64_t n) const {
         auto bucket = current_bucket();
         // ensure we have space.
-        auto zero = tbb::atomic<uint64_t>{0};
+        auto zero = tbb::atomic<int64_t>{0};
         _data.grow_to_at_least(bucket + 1, zero);
         _data[bucket].fetch_and_add(n);
         _total.fetch_and_add(n);
     }
 
-    uint64_t series::get_total() const {
+    int64_t series::get_total() const {
         return _total;
     }
 
-    uint64_t series::get_last() const {
+    int64_t series::get_last() const {
       auto cur = current_bucket();
       if (current_bucket() == 0) {
         return 0;
       }
-      
+
       return _data[cur - 1];
 
     }
